@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
+import org.opencv.core.Core;
 
 /**
  * Created by mlux on 2/6/17.
