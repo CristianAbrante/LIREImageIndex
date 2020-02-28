@@ -69,7 +69,8 @@ import java.nio.file.Paths;
 public class IndexingAndSearchWithLocalFeatures {
     public static void main(String[] args) throws IOException {
         // indexing all images in "testdata"
-        index("index", "data/photos");
+
+        index("index", "data/");
         // searching through the images.
         search("index");
     }
