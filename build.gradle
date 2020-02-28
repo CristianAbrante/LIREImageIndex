@@ -65,3 +65,13 @@ task runPokemonIndexer(type: JavaExec) {
 
     args '-i', 'data/'
 }
+
+task runPokemonSearcherTest(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    systemProperty "java.library.path", "/home/cristianabrante/Desktop/opencv-build-2/lib"
+
+    main = 'pokemon.lireapp.PokemonIndexSearcher'
+
+    args '-p', 'test/pikachu-test-2.jpg'
+}

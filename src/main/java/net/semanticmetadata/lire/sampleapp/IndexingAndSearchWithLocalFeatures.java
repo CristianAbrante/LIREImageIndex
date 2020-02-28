@@ -86,7 +86,7 @@ public class IndexingAndSearchWithLocalFeatures {
         // make sure that this matches what you used for indexing (see below) ...
         ImageSearcher imgSearcher = new GenericFastImageSearcher(1000, CEDD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), 128, true, reader, indexPath + ".config");
         // just a static example with a given image.
-        ImageSearchHits hits = imgSearcher.search(ImageIO.read(new File("testdata/ferrari/black/2828686873_2fa36f83d7_b.jpg")), reader);
+        ImageSearchHits hits = imgSearcher.search(ImageIO.read(new File("test/pikachu-test-2.jpg")), reader);
         for (int i=0; i<hits.length(); i++) {
             System.out.printf("%.2f: (%d) %s\n", hits.score(i), hits.documentID(i), reader.document(hits.documentID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
         }

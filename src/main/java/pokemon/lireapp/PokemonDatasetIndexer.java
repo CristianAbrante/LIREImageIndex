@@ -16,7 +16,7 @@ import java.util.Properties;
 public class PokemonDatasetIndexer {
     static String indexDirectory = "index";
     static String datasetKey = "-i";
-    static String helpMessage = "$> ExtractFeatures -i <directory>\n" +
+    static String helpMessage = "$> PokemonDatasetIndexer -i <directory>\n" +
             "\n" +
             "Build a lire indexer given a directory of images dataset.\n" +
             "Directory is going to be build in the index/ and index.config/ directory.\n" +
@@ -28,7 +28,7 @@ public class PokemonDatasetIndexer {
 
     public static void main(String[] args) {
         // Using for extracting command line options
-        Properties p = CommandLineUtils.getProperties(args, helpMessage, new String[]{"-i"});
+        Properties p = CommandLineUtils.getProperties(args, helpMessage, new String[]{datasetKey});
 
         // input directory
         File dir = new File(p.getProperty(datasetKey));
