@@ -56,3 +56,12 @@ task runIndexLocalSLocalFeat(type: JavaExec) {
     //args '/home/user/Documents/images/'
 }
 
+task runPokemonIndexer(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    systemProperty "java.library.path", "/home/cristianabrante/Desktop/opencv-build-2/lib"
+
+    main = 'pokemon.lireapp.PokemonDatasetIndexer'
+
+    args '-i', 'data/'
+}
