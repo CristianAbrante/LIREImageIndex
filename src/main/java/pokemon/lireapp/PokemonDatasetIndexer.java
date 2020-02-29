@@ -60,6 +60,7 @@ public class PokemonDatasetIndexer {
 
         //TODO: Use our own extractor.
         indexer.addExtractor(CvSurfExtractor.class);
+        indexer.addExtractor(PokemonFeature.class);
 
         System.out.println("Starting indexing with custom extractor.");
         indexer.run();
