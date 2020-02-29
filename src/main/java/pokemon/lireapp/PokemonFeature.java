@@ -16,6 +16,8 @@ public class PokemonFeature implements GlobalFeature {
     public void extract(BufferedImage bufferedImage) {
         int height = bufferedImage.getHeight();
         int width = bufferedImage.getWidth();
+        byte[] rawHistogram = new byte[(int) Math.pow(256, 3)];
+        Arrays.fill(rawHistogram, (byte) 0);
 
         this.histogram = new HashMap<>();
         for(int i=0; i < width; i++) {
@@ -48,44 +50,49 @@ public class PokemonFeature implements GlobalFeature {
 
     @Override
     public byte[] getByteArrayRepresentation() {
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(bos);
-            out.writeObject(this.histogram);
-            return bos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
+        byte[] rawHistogram = new byte[this.histogram.values().size() * 4];
+        int index = 0;
+        for (Map.Entry<String, Integer> entry : this.histogram.entrySet()) {
+            int[] rgbColor = getIntRepresentationFromString(entry.getKey());
+            rawHistogram[index] = (byte) rgbColor[0];
+            rawHistogram[index + 1] = (byte) rgbColor[1];
+            rawHistogram[index + 2] = (byte) rgbColor[2];
+            rawHistogram[index + 3] = entry.getValue().byteValue();
+            index += 4;
         }
-        return new byte[0];
+        return rawHistogram;
     }
 
     @Override
     public void setByteArrayRepresentation(byte[] bytes) {
-        try {
-            ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
-            ObjectInputStream in = new ObjectInputStream(byteIn);
-            this.histogram = (Map<String, Integer>) in.readObject();
-            System.out.println("inside " + this.histogram);
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        setByteArrayRepresentation(bytes, 0, 0);
     }
 
     @Override
     public void setByteArrayRepresentation(byte[] bytes, int i, int i1) {
-
+        System.out.println("method executed!");
+        this.histogram = new HashMap<>();
+        for (int index = 0; index < bytes.length; index += 4) {
+            int r = bytes[index] & 0xFF;
+            int g = bytes[index + 1] & 0xFF;
+            int b = bytes[index + 2] & 0xFF;
+            String color = getStringRepresentation(new int[]{r, g, b});
+            this.histogram.put(color, bytes[index + 3] & 0xFF);
+        }
+        this.sortHistogram();
     }
 
     @Override
     public double getDistance(LireFeature lireFeature) {
         PokemonFeature feature = (PokemonFeature) lireFeature;
-        int maxNumberOfElements = 20;
-        System.out.println(feature.histogram);
-        System.out.println();
-        System.out.println(this.histogram);
+        int maxNumberOfElements = 75;
 
         String[] currentHistogramFirstColors = this.histogram.keySet().stream().limit(maxNumberOfElements).collect(Collectors.toList()).toArray(new String[0]);
         String[] otherHistogramFirstColors = feature.histogram.keySet().stream().limit(maxNumberOfElements).collect(Collectors.toList()).toArray(new String[0]);
+
+        System.out.println(Arrays.toString(currentHistogramFirstColors));
+        System.out.println();
+        System.out.println(Arrays.toString(otherHistogramFirstColors));
 
         HashSet<String> set = new HashSet<>();
         set.addAll(Arrays.asList(currentHistogramFirstColors));
@@ -107,6 +114,15 @@ public class PokemonFeature implements GlobalFeature {
         int green = (pixel >> 8) & 0xff;
         int blue = (pixel) & 0xff;
         return new int[]{red,green,blue};
+    }
+
+    public static int[] getIntRepresentationFromString(String color) {
+        String[] splitColor = color.split(" ");
+        int[] result = new int[3];
+        result[0] = Integer.parseInt(splitColor[0]);
+        result[1] = Integer.parseInt(splitColor[1]);
+        result[2] = Integer.parseInt(splitColor[2]);
+        return result;
     }
 
     public static String getStringRepresentation(int rgb) {

@@ -73,5 +73,5 @@ task runPokemonSearcherTest(type: JavaExec) {
 
     main = 'pokemon.lireapp.PokemonIndexSearcher'
 
-    args '-p', 'test/pikachu-test-2.jpg'
+    args '-p', 'data/pikachu-1.jpg'
 }
