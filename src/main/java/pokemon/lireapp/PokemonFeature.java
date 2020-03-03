@@ -25,6 +25,66 @@ public class PokemonFeature implements GlobalFeature {
     public Map<String, Integer> histogram;
 
     /**
+     * Converts rgb array from a pixel of an image in hex format.
+     * @param pixel
+     * @return
+     */
+    public static int[] getRGBArray(int pixel) {
+        int red = (pixel >> 16) & 0xff;
+        int green = (pixel >> 8) & 0xff;
+        int blue = (pixel) & 0xff;
+        return new int[]{red,green,blue};
+    }
+
+    /**
+     * From the string representation, which is the key of the
+     * histogram, we obtain the array of ints representing r,g,b
+     * values.
+     *
+     * @param color
+     * @return
+     */
+    public static int[] getIntRepresentationFromString(String color) {
+        String[] splitColor = color.split(" ");
+        int[] result = new int[3];
+        result[0] = Integer.parseInt(splitColor[0]);
+        result[1] = Integer.parseInt(splitColor[1]);
+        result[2] = Integer.parseInt(splitColor[2]);
+        return result;
+    }
+
+    public static String getStringRepresentation(int rgb) {
+        return getStringRepresentation(getRGBArray(rgb));
+    }
+
+    /**
+     * Returns the string representation given an array of
+     * r, g, b values.
+     *
+     * @param rgbArr
+     * @return
+     */
+    public static String getStringRepresentation(int[] rgbArr) {
+        return rgbArr[0] + " " + rgbArr[1] + " " + rgbArr[2];
+    }
+
+    /**
+     * Tests if color is gray.
+     *
+     * @param rgbArr
+     * @return
+     */
+    public static boolean isGray(int[] rgbArr) {
+        int rgDiff = rgbArr[0] - rgbArr[1];
+        int rbDiff = rgbArr[0] - rgbArr[2];
+        // Filter out black, white and grays...... (tolerance within 10 pixels)
+        int tolerance = 10;
+        if (rgDiff > tolerance || rgDiff < -tolerance)
+            return rbDiff <= tolerance && rbDiff >= -tolerance;
+        return true;
+    }
+
+    /**
      * Method used for extracting the features of an image.
      *
      * For our purpose this method is going to build the histogram variable.
@@ -170,50 +230,6 @@ public class PokemonFeature implements GlobalFeature {
     }
 
     /**
-     * Converts rgb array from a pixel of an image in hex format.
-     * @param pixel
-     * @return
-     */
-    public static int[] getRGBArray(int pixel) {
-        int red = (pixel >> 16) & 0xff;
-        int green = (pixel >> 8) & 0xff;
-        int blue = (pixel) & 0xff;
-        return new int[]{red,green,blue};
-    }
-
-    /**
-     * From the string representation, which is the key of the
-     * histogram, we obtain the array of ints representing r,g,b
-     * values.
-     *
-     * @param color
-     * @return
-     */
-    public static int[] getIntRepresentationFromString(String color) {
-        String[] splitColor = color.split(" ");
-        int[] result = new int[3];
-        result[0] = Integer.parseInt(splitColor[0]);
-        result[1] = Integer.parseInt(splitColor[1]);
-        result[2] = Integer.parseInt(splitColor[2]);
-        return result;
-    }
-
-    public static String getStringRepresentation(int rgb) {
-        return getStringRepresentation(getRGBArray(rgb));
-    }
-
-    /**
-     * Returns the string representation given an array of
-     * r, g, b values.
-     *
-     * @param rgbArr
-     * @return
-     */
-    public static String getStringRepresentation(int[] rgbArr) {
-        return rgbArr[0] + " " + rgbArr[1] + " " + rgbArr[2];
-    }
-
-    /**
      * Method for sorting the histogram in the reversed order,
      * colors with more occurrences will go fist.
      */
@@ -222,21 +238,5 @@ public class PokemonFeature implements GlobalFeature {
                 .stream()
                 .sorted((Map.Entry.<String, Integer>comparingByValue().reversed()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-    }
-
-    /**
-     * Tests if color is gray.
-     *
-     * @param rgbArr
-     * @return
-     */
-    public static boolean isGray(int[] rgbArr) {
-        int rgDiff = rgbArr[0] - rgbArr[1];
-        int rbDiff = rgbArr[0] - rgbArr[2];
-        // Filter out black, white and grays...... (tolerance within 10 pixels)
-        int tolerance = 10;
-        if (rgDiff > tolerance || rgDiff < -tolerance)
-            return rbDiff <= tolerance && rbDiff >= -tolerance;
-        return true;
     }
 }
