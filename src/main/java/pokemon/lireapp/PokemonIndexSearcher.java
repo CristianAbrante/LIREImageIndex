@@ -1,8 +1,6 @@
 package pokemon.lireapp;
 
-import net.semanticmetadata.lire.aggregators.BOVW;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSurfExtractor;
 import net.semanticmetadata.lire.searchers.GenericFastImageSearcher;
 import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.searchers.ImageSearcher;
@@ -36,12 +34,14 @@ public class PokemonIndexSearcher {
         IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(PokemonDatasetIndexer.indexDirectory)));
 
         // make sure that this matches what you used for indexing (see below) ...
-        ImageSearcher imgSearcher = new GenericFastImageSearcher(20, PokemonFeature.class);
+        ImageSearcher imgSearcher = new GenericFastImageSearcher(200, PokemonFeature.class);
 
         // just a static example with a given image.
         ImageSearchHits hits = imgSearcher.search(ImageIO.read(new File(p.getProperty(imageKey))), reader);
         for (int i = 0; i < hits.length(); i++) {
-            System.out.printf("%.2f: (%d) %s\n", hits.score(i), hits.documentID(i), reader.document(hits.documentID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+            if (hits.score(i) > 0.0) {
+                System.out.printf("%.2f: (%d) %s\n", hits.score(i), hits.documentID(i), reader.document(hits.documentID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+            }
         }
     }
 }
